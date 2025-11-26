@@ -13,3 +13,40 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+   id             Int       @id @default(autoincrement())
+   username       String    @unique
+   password       String
+   admin          Boolean   @default(false)
+   posts          Post[]
+   comments       Comment[]
+}
+
+model Post {
+   id             Int       @id @default(autoincrement())
+   title          String
+   generatedAt    DateTime  @default(now())
+   isPublic       Boolean   @default(true)
+   comments       Comment[]
+
+   // relations
+   userId         Int
+   user           User      @relation(fields: [userId], references: [id])
+}
+
+model Comment {
+   id             Int       @id @default(autoincrement())
+   generatedAt    DateTime  @default(now())
+
+   // relations
+   userId         Int
+   user           User      @relation(fields: [userId], references: [id])
+
+   postId         Int
+   post           Post      @relation(fields: [postId], references: [id])
+}
+
+
+
+
