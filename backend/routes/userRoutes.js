@@ -15,14 +15,11 @@ userRouter.post("/sign-up", async (req, res, next) => {
     const existingUser = await prisma.user.findUnique({
       where: { username },
     });
-
     if (existingUser) {
       return res.status(400).send("Username already exists.");
     }
-
     // Hash the password before storing
     const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create the new user
     const newUser = await prisma.user.create({
       data: {
@@ -41,10 +38,11 @@ userRouter.post("/sign-up", async (req, res, next) => {
 
 //signed in user view 
 userRouter.get("/index", async (req, res, next) => {
-
+    let posts = {}
     try {
+        if (!req.user) { redirect("/sign-up")};
         if (req.user) {
-            posts = await prisma.posts.findMany({
+            posts = await prisma.post.findMany({
                 where: { userId: req.user.id },
                 orderBy: { generatedAt: 'desc' },
       });
@@ -55,11 +53,6 @@ userRouter.get("/index", async (req, res, next) => {
         res.render("index", { user: req.user, posts: [] }); // fallback safe array
     }
 
-
-
-
-
 })
-
 
 module.exports = userRouter;
