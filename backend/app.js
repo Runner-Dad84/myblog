@@ -4,8 +4,8 @@ const session = require("express-session");
 const passport = require("passport");
 const configurePassport = require("./passportConfig");
 const path = require("path");
-const userRouter = required("./routes/userRouter")
-const postRouter = required("./routes/userRouter")
+const userRouter = require("./routes/userRouter")
+const postRouter = require("./routes/postRouter")
 
 const app = express();
 const PORT = process.env.PORT || 3011;
@@ -40,4 +40,6 @@ app.use("/", postRouter);
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+module.exports = app;
 
