@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const prisma = require('../prismaClient');
 const bcrypt = require("bcryptjs");
-const passport = required("passport")
+const passport = require("passport")
 const userRouter = express.Router();
 
 
@@ -17,7 +17,7 @@ userRouter.post("/sign-up", async (req, res, next) => {
       where: { username },
     });
     if (existingUser) {
-      return res.status(400).send("Username already exists.");
+      return res.status(400).send({ error: "Username already exists." });
     }
     // Hash the password before storing
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -29,11 +29,18 @@ userRouter.post("/sign-up", async (req, res, next) => {
       },
     });
 
+      // If running tests → return JSON instead of redirect
+      if (process.env.NODE_ENV === "test") {
+      return res.status(201).json({
+        message: "User created",
+        user: newUser,
+      });}
+
     console.log("✅ User created:", newUser);
     res.redirect("/");
   } catch (err) {
     console.error("Error creating user:", err);
-    next(err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
