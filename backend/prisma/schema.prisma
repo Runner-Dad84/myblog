@@ -28,6 +28,7 @@ model Post {
    title          String
    generatedAt    DateTime  @default(now())
    isPublic       Boolean   @default(true)
+   content        String
    comments       Comment[]
 
    // relations
