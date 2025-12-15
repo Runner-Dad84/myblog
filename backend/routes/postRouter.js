@@ -9,7 +9,7 @@ const prisma = require('../prismaClient');
 postRouter.post("/post/create", async (req, res) => {
   try {
     
-    const { title, isPublic } = req.body;
+    const { title, isPublic, isPublished, content } = req.body;
 
       // basic validation / default
     const postTitle = (title && String(title).trim()) || "Untitled Folder";
@@ -17,17 +17,24 @@ postRouter.post("/post/create", async (req, res) => {
     // make sure we have a user id (adjust to your auth/session setup)
     const userId = req.user?.id;
     
+    // if unauthenticated, either reject or use a test fallback
     if (!userId) {
-      // if unauthenticated, either reject or use a test fallback
-      return res.status(401).json({ error: "Not authenticated" });}
-      // OR for testing: const userId = 1;
+      return res.status(401).json({ error: "Not authenticated" });
+    }  // OR for testing: const userId = 1;
+
+    // if no content, either reject or use a test fallback
+    if (!content || !String(content).trim()) {
+      return res.status(500).json({ error: "Failed to create post" });;
+    }
 
     const newPost = await prisma.post.create({
       data: {
         title: postTitle,
+        content: content,
         userId,
         // only include isPublic if specified
         ...(typeof isPublic === "boolean" && { isPublic }),
+        ...(typeof isPublished === "boolean" && { isPublished }),
       },
     });
      res.status(201).json({ message: "Post created", post: newPost });
