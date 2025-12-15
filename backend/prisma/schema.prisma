@@ -28,6 +28,7 @@ model Post {
    title          String
    generatedAt    DateTime  @default(now())
    isPublic       Boolean   @default(true)
+   isPublished    Boolean   @default(false)
    content        String
    comments       Comment[]
 
