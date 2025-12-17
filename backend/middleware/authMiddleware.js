@@ -5,4 +5,4 @@ function requireAuth(req, res, next) {
   next();
 }
 
-module.exports = requireAuth;
+modules.exports = requireAuth;
