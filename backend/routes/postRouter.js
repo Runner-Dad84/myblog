@@ -3,46 +3,21 @@ const postRouter = express.Router();
 const dotenv = require("dotenv");
 dotenv.config();
 const prisma = require('../prismaClient');
+const { requireAuth } = require("../middleware/authMiddleware")
+const { handleValidationErrors } = require("../validators/handleValidationErrors")
+const { validatePostCreate } = require("../validators/validatorPostCreate");
+const { createPost } = required("../controllers/postController")
 
 
 //create post
 postRouter.post("/post/create", async (req, res) => {
-  try {
-    
-    const { title, isPublic, isPublished, content } = req.body;
+   "/post/create",
+  requireAuth,               // authentication middleware (reusable)
+  validatePostCreate,        // validation rules
+  handleValidationErrors,    // converts validation failures → 400
+  createPost
 
-      // basic validation / default
-    const postTitle = (title && String(title).trim()) || "Untitled Folder";
-
-    // make sure we have a user id (adjust to your auth/session setup)
-    const userId = req.user?.id;
-    
-    // if unauthenticated, either reject or use a test fallback
-    if (!userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }  // OR for testing: const userId = 1;
-
-    // if no content, either reject or use a test fallback
-    if (!content || !String(content).trim()) {
-      return res.status(500).json({ error: "Failed to create post" });;
-    }
-
-    const newPost = await prisma.post.create({
-      data: {
-        title: postTitle,
-        content: content,
-        userId,
-        // only include isPublic if specified
-        ...(typeof isPublic === "boolean" && { isPublic }),
-        ...(typeof isPublished === "boolean" && { isPublished }),
-      },
-    });
-     res.status(201).json({ message: "Post created", post: newPost });
-  } catch (err) {
-     console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-})
+});
 
 //delete post
 postRouter.post("/post/delete/:id", async (req, res) => {
