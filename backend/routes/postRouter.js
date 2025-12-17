@@ -10,14 +10,13 @@ const { createPost } = required("../controllers/postController")
 
 
 //create post
-postRouter.post("/post/create", async (req, res) => {
+postRouter.post(
    "/post/create",
   requireAuth,               // authentication middleware (reusable)
   validatePostCreate,        // validation rules
   handleValidationErrors,    // converts validation failures → 400
   createPost
-
-});
+);
 
 //delete post
 postRouter.post("/post/delete/:id", async (req, res) => {
