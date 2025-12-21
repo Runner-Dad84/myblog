@@ -3,10 +3,12 @@ const postRouter = express.Router();
 const dotenv = require("dotenv");
 dotenv.config();
 const prisma = require('../prismaClient');
-const { requireAuth } = require("../middleware/authMiddleware")
-const { handleValidationErrors } = require("../validators/handleValidationErrors")
+const { requireAuth } = require("../middleware/authMiddleware");
+const { handleValidationErrors } = require("../validators/handleValidationErrors");
 const { validatePostCreate } = require("../validators/validatorPostCreate");
-const { createPost } = required("../controllers/postController")
+const { validatePostDelete } = require("../validators/validatorPostDelete");
+const { createPost, deletePost } = require("../controllers/postController");
+
 
 
 //create post
@@ -18,46 +20,15 @@ postRouter.post(
   createPost
 );
 
-//delete post
-postRouter.post("/post/delete/:id", async (req, res) => {
-    const postId = parseInt(req.params.id, 10);
-    const userId = req.user?.id;
-    console.log("DELETE POST HIT:", postId);
+postRouter.post(
+  "/post/delete/:id",
+  requireAuth,
+  validatePostDelete,
+  handleValidationErrors,
+  deletePost
+)
 
-  try {
-      //prevents a user from deleting another users post
-      const post = await prisma.post.findUnique({
-      where: { id: postId },
-      });
 
-    if (!post) {
-        return res.status(403).send("Not authorized to delete this post");
-    }
-
-    // Prevent any user from deleting any other user's post
-    if (post.userId !== userId) {
-      return res.status(403).send("Not authorized to delete this post");
-    }
-
-     // Delete child comments first to satisfy foreign key constraints
-    await prisma.comment.deleteMany({
-      where: { postId: parseInt(postId) },
-    });
-
-    // Then delete the post
-    await prisma.post.delete({
-      where: { id: postId },
-    });
-
-    console.log('Deleted', postId);
-
-    res.redirect("/"); 
-} catch (err) {
-    console.log(err)
-    res.status(500).send("Server error");
-};
-}
-);
 
 //edit post
 postRouter.patch("/post/edit/:id", async (req, res) => {
