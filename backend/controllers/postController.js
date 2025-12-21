@@ -24,7 +24,39 @@ async function createPost(req, res) {
     }
 }
 
+async function deletePost(req, res){
+   const postId = parseInt(req.params.id, 10);
+   const userId = req.user.id;
+    
+    try {
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+            select: { userId: true },
+        });
+        //cannot delete a non-existant post
+        if (!post) {
+          return res.status(404).json({ error: "Post not found" });
+        }
+        //prevent unathorized user from deleting post
+        if (post.userId !== userId) {
+          return res.status(403).json({ error: "Not authorized to delete this post" });
+        }
+        
+        await prisma.comment.deleteMany({
+             where: { postId },
+        });
+
+        await prisma.post.delete({
+            where: { id: postId },
+         });
+         res.redirect("/"); 
+        } catch (err) {
+            console.log(err)
+            res.status(500).send("Server error");
+        };
+}
 
 module.exports = {
   createPost,
+  deletePost
 };
