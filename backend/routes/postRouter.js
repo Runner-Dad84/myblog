@@ -7,7 +7,7 @@ const { requireAuth } = require("../middleware/authMiddleware");
 const { handleValidationErrors } = require("../validators/handleValidationErrors");
 const { validatePostCreate } = require("../validators/validatorPostCreate");
 const { validatePostDelete } = require("../validators/validatorPostDelete");
-const { createPost, deletePost } = require("../controllers/postController");
+const { createPost, deletePost, editPost } = require("../controllers/postController");
 
 
 
@@ -28,13 +28,18 @@ postRouter.post(
   deletePost
 )
 
-
+postRouter.patch(
+  "/post/edit/:id",
+  requireAuth,
+  handleValidationErrors,
+  editPost
+)
 
 //edit post
 postRouter.patch("/post/edit/:id", async (req, res) => {
     const postId = parseInt(req.params.id, 10);
     const userId = req.user?.id;
-    console.log("EDIT POST HIT:", postId);
+    
 
     try {
         //check if user authorized
