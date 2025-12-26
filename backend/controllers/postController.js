@@ -1,7 +1,6 @@
 const prisma = require("../prismaClient");
 
 
-
 async function createPost(req, res) {
     try {
     const { title, isPublic, isPublished, content } = req.body;
@@ -55,7 +54,7 @@ async function deletePost(req, res){
             res.status(500).send("Server error");
         };
 }
-///working on this now
+
 async function editPost(req, res) {
         const postId = parseInt(req.params.id, 10);
         const userId = req.user?.id;
