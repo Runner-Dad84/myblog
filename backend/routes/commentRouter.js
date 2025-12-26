@@ -3,35 +3,36 @@ const commentRouter = express.Router();
 const dotenv = require("dotenv");
 dotenv.config();
 const prisma = require('../prismaClient');
+const { requireAuth } = require("../middleware/authMiddleware");
+const { handleValidationErrors } = require("../validators/handleValidationErrors");
+const { validateCommentCreate } = require("../validators/validatorCommentCreate");
+const { validateCommentDelete } = require("../validators/validatorCommentDelete");
+const { createComment, deleteComment, editComment } = require("../controllers/commentController");
 
-//create post
-postRouter.post("/comment/create", async (req, res) => {
-  try {
-    const { title, isPublic } = req.body;
 
-      // basic validation / default
-    const postTitle = (title && String(title).trim()) || "Untitled Folder";
 
-    // make sure we have a user id (adjust to your auth/session setup)
-    const userId = req.user?.id;
-    const postId = req.post?.id;
-    
-    if (!userId) {
-      // if unauthenticated, either reject or use a test fallback
-      return res.status(401).json({ error: "Not authenticated" });}
-      // OR for testing: const userId = 1;
+//create comment
+commentRouter.post(
+   "/comment/create",
+  requireAuth,               // authentication middleware (reusable)
+  validateCommentCreate,        // validation rules
+  handleValidationErrors,    // converts validation failures → 400
+  createComment
+);
 
-    const newPost = await prisma.post.create({
-      data: {
-        title: postTitle,
-        userId,
-        // only include isPublic if specified
-        ...(typeof isPublic === "boolean" && { isPublic }),
-      },
-    });
-     res.status(201).json({ message: "Post created", post: newPost });
-  } catch (err) {
-     console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-})
+commentRouter.post(
+  "/comment/delete/:id",
+  requireAuth,
+  validateCommentDelete,
+  handleValidationErrors,
+  deleteComment
+)
+
+commentRouter.patch(
+  "/comment/edit/:id",
+  requireAuth,
+  handleValidationErrors,
+  editComment
+)
+
+module.exports = commentRouter;
