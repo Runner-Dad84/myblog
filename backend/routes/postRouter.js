@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 const prisma = require('../prismaClient');
 const { requireAuth } = require("../middleware/authMiddleware");
+const { loadPost } = require("../middleware/loadPost");
+const { postOwner } = require("../middleware/postOwner");
 const { handleValidationErrors } = require("../validators/handleValidationErrors");
 const { validatePostCreate } = require("../validators/validatorPostCreate");
 const { validatePostDelete } = require("../validators/validatorPostDelete");
@@ -23,7 +25,7 @@ postRouter.post(
 postRouter.post(
   "/post/delete/:id",
   requireAuth,
-  loadpost,
+  loadPost,
   postOwner,
   validatePostDelete,
   handleValidationErrors,
