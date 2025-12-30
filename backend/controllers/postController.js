@@ -8,7 +8,7 @@ async function createPost(req, res) {
 
       const newPost = await prisma.post.create({
       data: {
-        title: postTitle,
+        title: title,
         content: content,
         userId,
         // only include isPublic if specified
