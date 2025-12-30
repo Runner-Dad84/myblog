@@ -23,6 +23,8 @@ postRouter.post(
 postRouter.post(
   "/post/delete/:id",
   requireAuth,
+  loadpost,
+  postOwner,
   validatePostDelete,
   handleValidationErrors,
   deletePost
