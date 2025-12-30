@@ -28,18 +28,6 @@ async function deletePost(req, res){
    const userId = req.user.id;
     
     try {
-        const post = await prisma.post.findUnique({
-            where: { id: postId },
-            select: { userId: true },
-        });
-        //cannot delete a non-existant post
-        if (!post) {
-          return res.status(404).json({ error: "Post not found" });
-        }
-        //prevent unathorized user from deleting post
-        if (post.userId !== userId) {
-          return res.status(403).json({ error: "Not authorized to delete this post" });
-        }
 
         await prisma.comment.deleteMany({
              where: { postId },
