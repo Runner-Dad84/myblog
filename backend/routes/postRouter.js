@@ -8,9 +8,8 @@ const { loadPost } = require("../middleware/loadPost");
 const { postOwner } = require("../middleware/postOwner");
 const { handleValidationErrors } = require("../validators/handleValidationErrors");
 const { validatePostCreate } = require("../validators/validatorPostCreate");
-const { validatePostDelete } = require("../validators/validatorPostDelete");
+const { validatePostUpdate } = require("../validators/validatorPostCreate");
 const { createPost, deletePost, editPost } = require("../controllers/postController");
-
 
 
 //create post
@@ -24,18 +23,20 @@ postRouter.post(
 
 postRouter.post(
   "/post/delete/:id",
-  requireAuth,
-  loadPost,
-  postOwner,
-  validatePostDelete,
-  handleValidationErrors,
+  requireAuth,              // authentication middleware (reusable)
+  loadPost,                 // middleware - checks post id valid, check post exists
+  postOwner,                // middleware - checks requestor user id matches user id on target post
+  handleValidationErrors,   // converts validation failures → 400
   deletePost
 )
 
 postRouter.patch(
   "/post/edit/:id",
-  requireAuth,
-  handleValidationErrors,
+  requireAuth,               // authentication middleware (reusable)
+  loadPost,                  // middleware - checks post id valid, check post exists
+  postOwner,                 // middleware - checks requestor user id matches user id on target post
+  validatePostUpdate,        // validation rules
+  handleValidationErrors,    // converts validation failures → 400
   editPost
 )
 
