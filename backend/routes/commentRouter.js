@@ -13,9 +13,9 @@ const { createComment, deleteComment, editComment } = require("../controllers/co
 
 //create comment
 commentRouter.post(
-   "/comment/create/postId",
+  "/comment/create/postId",
   requireAuth,               // authentication middleware (reusable)
-  validateCommentCreate,     // validation rules
+  validateCommentCreate,
   handleValidationErrors,    // converts validation failures → 400
   createComment
 );
@@ -23,10 +23,9 @@ commentRouter.post(
 commentRouter.post(
   "/comment/delete/:id",
   requireAuth,
-  loadpost,
-  postOwner,
-  validateCommentDelete,
   handleValidationErrors,
+  loadComment,  
+  commentOwer,  
   deleteComment
 )
 
