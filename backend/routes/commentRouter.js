@@ -6,7 +6,8 @@ const prisma = require('../prismaClient');
 const { requireAuth } = require("../middleware/authMiddleware");
 const { handleValidationErrors } = require("../validators/handleValidationErrors");
 const { validateCommentCreate } = require("../validators/validatorCommentCreate");
-const { validateCommentDelete } = require("../validators/validatorCommentDelete");
+const { loadComment } = require("../middleware/loadComment");
+const { commentOwner } = require("../middleware/commentOwner");
 const { createComment, deleteComment, editComment } = require("../controllers/commentController");
 
 
@@ -25,7 +26,7 @@ commentRouter.post(
   requireAuth,
   handleValidationErrors,
   loadComment,  
-  commentOwer,  
+  commentOwner,  
   deleteComment
 )
 
