@@ -28,13 +28,6 @@ commentRouter.post(
   loadComment,  
   commentOwner,  
   deleteComment
-)
-
-commentRouter.patch(
-  "/comment/edit/:id",
-  requireAuth,
-  handleValidationErrors,
-  editComment
-)
+);
 
 module.exports = commentRouter;
