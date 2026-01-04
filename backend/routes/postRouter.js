@@ -33,10 +33,10 @@ postRouter.post(
 postRouter.patch(
   "/post/edit/:id",
   requireAuth,               // authentication middleware (reusable)
-  loadPost,                  // middleware - checks post id valid, check post exists
-  postOwner,                 // middleware - checks requestor user id matches user id on target post
   validatePostUpdate,        // validation rules
   handleValidationErrors,    // converts validation failures → 400
+  loadPost,                  // middleware - checks post id valid, check post exists
+  postOwner,                 // middleware - checks requestor user id matches user id on target post
   editPost
 )
 
