@@ -6,6 +6,7 @@ const session = require("express-session");
 const path = require("path");
 const userRouter = require("./routes/userRouter")
 const postRouter = require("./routes/postRouter")
+const commentRouter = require("./routes/commentRouter")
 const authRouter = require("./routes/authRouter")
 
 // load the passport strategy
@@ -37,6 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", userRouter);
 app.use("/", postRouter);
+app.use('/', commentRouter);
 app.use("/", authRouter);
 
 // start server
