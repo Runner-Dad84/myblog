@@ -1,3 +1,5 @@
+const { body } = require("express-validator");
+
 export const validatePostUpdate = [
    body('title')
    .optional()

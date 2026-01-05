@@ -1,4 +1,5 @@
-import { param } from "express-validator";
+const { param } = require ("express-validator");
+
 
 export const validateCommentCreate = [
 
