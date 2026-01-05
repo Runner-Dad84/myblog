@@ -1,13 +1,17 @@
 require("dotenv").config();
 const express = require("express");
-const passport = require("passport");
 const session = require("express-session");
-
+const passport = require("passport");
 const path = require("path");
+//routes
 const userRouter = require("./routes/userRouter")
 const postRouter = require("./routes/postRouter")
 const commentRouter = require("./routes/commentRouter")
 const authRouter = require("./routes/authRouter")
+
+const app = express();
+const PORT = process.env.PORT || 3011;
+
 
 // load the passport strategy
 if (process.env.NODE_ENV !== "test") {
@@ -17,8 +21,9 @@ if (process.env.NODE_ENV !== "test") {
   console.log("Skipping Local Strategy (TEST MODE)");
 }
 
-const app = express();
-const PORT = process.env.PORT || 3011;
+// middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // sessions middleware
 app.use(
@@ -26,16 +31,20 @@ app.use(
     secret: process.env.SESSION_SECRET || "test_secret",
     resave: false,
     saveUninitialized: false,
+     cookie: {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// middleware
-app.use(express.json());
+//static passwords
 app.use(express.static(path.join(__dirname, "public")));
 
+//routers
 app.use("/", userRouter);
 app.use("/", postRouter);
 app.use('/', commentRouter);
