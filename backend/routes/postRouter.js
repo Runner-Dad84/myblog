@@ -8,7 +8,7 @@ const { loadPost } = require("../middleware/loadPost");
 const { postOwner } = require("../middleware/postOwner");
 const { handleValidationErrors } = require("../validators/handleValidationErrors");
 const { validatePostCreate } = require("../validators/validatorPostCreate");
-const { validatePostUpdate } = require("../validators/validatorPostCreate");
+const { validatePostUpdate } = require("../validators/validatorPostUpdate");
 const { createPost, deletePost, editPost } = require("../controllers/postController");
 
 
