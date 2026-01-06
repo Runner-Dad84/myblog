@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-export const validatePostCreate = [
+const validatePostCreate = [
 
     body ('title')
     .exists ({ checkFalsy: true })
@@ -24,4 +24,8 @@ export const validatePostCreate = [
     .isBoolean()
     .withMessage("isPublic must be a boolean"),
 ]
+
+module.exports = {
+  validatePostCreate,
+};
      

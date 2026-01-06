@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-export const validatePostUpdate = [
+const validatePostUpdate = [
    body('title')
    .optional()
    .isString().withMessage('Post requires a title')
@@ -9,7 +9,7 @@ export const validatePostUpdate = [
 
    body('content')
    .optional()
-   .isString().message('Content must be a string')
+   .isString().withmessage('Content must be a string')
    .notEmpty().message('Contact may not be empty')
    .trim(),
 
@@ -37,3 +37,7 @@ export const validatePostUpdate = [
    })
 
 ];
+
+module.exports = {
+  validatePostUpdate,
+};
