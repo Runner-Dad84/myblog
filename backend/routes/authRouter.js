@@ -1,53 +1,196 @@
 const express = require("express");
 const passport = require("passport");
+const bcrypt = require("bcryptjs");
+const { body } = require("express-validator");
+const { validationResult } = require("express-validator");
+const prisma = require("../prismaClient");
 
 const authRouter = express.Router();
 
-// ---------------------------------------------
-// POST /sign-in
-// ---------------------------------------------
-authRouter.post("/sign-in", (req, res, next) => {
+/*
+|--------------------------------------------------------------------------
+| Helpers (inline for now)
+|--------------------------------------------------------------------------
+*/
 
-  // =============================================
-  // TEST MODE: BYPASS PASSPORT AND DATABASE
-  // =============================================
-  if (process.env.NODE_ENV === "test") {
-
-    const { username, password } = req.body;
-
-    // Missing credentials
-    if (!username || !password) {
-      return res.status(400).json({ error: "Missing username or password" });
-    }
-
-    // Mock “valid” user for unit tests
-    return res.status(200).json({
-      message: "Signed in (mock)",
-      user: {
-        id: 1,
-        username,
-      },
-    });
+function handleValidationErrors(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
+  next();
+}
 
-  // =============================================
-  // NORMAL MODE (REAL PASSPORT FLOW)
-  // =============================================
-  passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
+function requireAuth(req, res, next) {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
+  next();
+}
 
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
+/*
+|--------------------------------------------------------------------------
+| POST /auth/sign-up
+|--------------------------------------------------------------------------
+*/
+authRouter.post(
+  "/auth/sign-up",
+
+  // validation
+  body("username")
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage("Username must be at least 3 characters"),
+
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+
+  handleValidationErrors,
+
+  async (req, res) => {
+    try {
+      const { username, password } = req.body;
+
+      const existingUser = await prisma.user.findUnique({
+        where: { username },
+      });
+
+      if (existingUser) {
+        return res.status(409).json({ error: "Username already taken" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const user = await prisma.user.create({
+        data: {
+          username,
+          password: hashedPassword,
+        },
+      });
+
+      // auto-login after signup
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ error: "Login after signup failed" });
+        }
+
+        res.status(201).json({
+          message: "User created",
+          user: {
+            id: user.id,
+            username: user.username,
+          },
+        });
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+  }
+);
+
+/*
+|--------------------------------------------------------------------------
+| POST /auth/sign-in
+|--------------------------------------------------------------------------
+*/
+authRouter.post(
+  "/auth/sign-in",
+
+  body("username").exists(),
+  body("password").exists(),
+  handleValidationErrors,
+
+  (req, res, next) => {
+    // test-mode bypass
+    if (process.env.NODE_ENV === "test") {
+      return res.json({
+        message: "Signed in (mock)",
+        user: { id: 1, username: req.body.username },
+      });
     }
 
-    req.logIn(user, (err) => {
+    passport.authenticate("local", (err, user, info) => {
       if (err) return next(err);
 
-      // Production behavior — redirect
-      return res.redirect("/index");
-    });
-  })(req, res, next);
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      req.logIn(user, (err) => {
+        if (err) return next(err);
+
+        res.json({
+          message: "Signed in",
+          user: {
+            id: user.id,
+            username: user.username,
+          },
+        });
+      });
+    })(req, res, next);
+  }
+);
+
+/*
+|--------------------------------------------------------------------------
+| POST /auth/log-out
+|--------------------------------------------------------------------------
+*/
+authRouter.post("/auth/log-out", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+
+    res.json({ message: "Logged out" });
+  });
 });
 
-module.exports = authRouter;
+/*
+|--------------------------------------------------------------------------
+| GET /auth/session
+|--------------------------------------------------------------------------
+| Used by frontend to check login state
+|--------------------------------------------------------------------------
+*/
+authRouter.get("/auth/session", (req, res) => {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.json({ authenticated: false });
+  }
 
+  res.json({
+    authenticated: true,
+    user: {
+      id: req.user.id,
+      username: req.user.username,
+    },
+  });
+});
+
+/*
+|--------------------------------------------------------------------------
+| DELETE /auth/delete-account
+|--------------------------------------------------------------------------
+*/
+authRouter.post(
+  "/auth/delete-account",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      await prisma.comment.deleteMany({ where: { userId } });
+      await prisma.post.deleteMany({ where: { userId } });
+      await prisma.user.delete({ where: { id: userId } });
+
+      req.logout(() => {
+        res.json({ message: "Account deleted" });
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+  }
+);
+
+module.exports = authRouter;
