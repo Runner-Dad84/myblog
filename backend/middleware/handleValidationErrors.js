@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 
-module.exports = function handleValidationErrors(req, res, next) {
+function handleValidationErrors(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -13,4 +13,8 @@ module.exports = function handleValidationErrors(req, res, next) {
   }
 
   next();
+};
+
+module.exports = {
+  handleValidationErrors,
 };
