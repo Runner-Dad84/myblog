@@ -1,7 +1,7 @@
-// middleware/loadPost.js
+// middleware/loadComment.js
 const prisma = require('../prismaClient');
 
-async function loadPost(req, res, next) {
+async function loadComment(req, res, next) {
   const commentId = parseInt(req.params.id || req.params.commentId, 10);
 
   if (Number.isNaN(commentId)) {
