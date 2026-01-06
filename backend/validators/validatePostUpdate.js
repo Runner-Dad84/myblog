@@ -9,18 +9,18 @@ const validatePostUpdate = [
 
    body('content')
    .optional()
-   .isString().withmessage('Content must be a string')
-   .notEmpty().message('Contact may not be empty')
+   .isString().withMessage('Content must be a string')
+   .notEmpty().withMessage('Contact may not be empty')
    .trim(),
 
    body('isPublic')
    .optional()
-   .isBoolean().message('isPublic must be a boolean')
+   .isBoolean().withMessage('isPublic must be a boolean')
    .toBoolean(),
 
     body('isPublished')
    .optional()
-   .isBoolean().message('isPublished must be a boolean')
+   .isBoolean().withMessage('isPublished must be a boolean')
    .toBoolean(),
 
    //cross check to ensure at least one field is changed

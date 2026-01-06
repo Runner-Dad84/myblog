@@ -1,6 +1,5 @@
 const { param } = require ("express-validator");
 
-
 const validateCommentCreate = [
 
     param ('postId')
