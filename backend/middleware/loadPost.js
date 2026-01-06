@@ -20,4 +20,4 @@ async function loadPost(req, res, next) {
   next();
 }
 
-module.exports = loadPost;
+module.exports = { loadPost };

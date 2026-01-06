@@ -5,4 +5,4 @@ function postOwner(req, res, next) {
   next();
 }
 
-module.exports = postOwner;
+module.exports = { postOwner };
