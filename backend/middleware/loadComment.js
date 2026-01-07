@@ -22,4 +22,4 @@ async function loadComment(req, res, next) {
   next();
 }
 
-module.exports = loadComment;
+module.exports = { loadComment };
