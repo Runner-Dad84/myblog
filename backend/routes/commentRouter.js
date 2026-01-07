@@ -5,7 +5,7 @@ dotenv.config();
 const prisma = require('../prismaClient');
 const { requireAuth } = require("../middleware/authMiddleware");
 const { handleValidationErrors } = require("../middleware/handleValidationErrors");
-const { validateCommentCreate } = require("../validators/validatorCommentCreate");
+const { validateCommentCreate } = require("../validators/validateCommentCreate");
 const { loadComment } = require("../middleware/loadComment");
 const { commentOwner } = require("../middleware/commentOwner");
 const { createComment, deleteComment, editComment } = require("../controllers/commentController");
