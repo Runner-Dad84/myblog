@@ -8,7 +8,7 @@ const { handleValidationErrors } = require("../middleware/handleValidationErrors
 const { validateCommentCreate } = require("../validators/validateCommentCreate");
 const { loadComment } = require("../middleware/loadComment");
 const { commentOwner } = require("../middleware/commentOwner");
-const { createComment, deleteComment, editComment } = require("../controllers/commentController");
+const { createComment, deleteComment } = require("../controllers/commentController");
 
 
 
