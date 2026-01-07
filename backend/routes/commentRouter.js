@@ -10,8 +10,6 @@ const { loadComment } = require("../middleware/loadComment");
 const { commentOwner } = require("../middleware/commentOwner");
 const { createComment, deleteComment } = require("../controllers/commentController");
 
-
-
 //create comment
 commentRouter.post(
   "/comment/create/postId",

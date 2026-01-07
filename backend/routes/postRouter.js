@@ -11,13 +11,6 @@ const { validatePostCreate } = require("../validators/validatePostCreate");
 const { validatePostUpdate } = require("../validators/validatePostUpdate");
 const { createPost, deletePost, editPost } = require("../controllers/postController");
 
-console.log({
-  requireAuth,            
-  loadPost,                 
-  postOwner,                
-  handleValidationErrors,
-  deletePost
-  });
 
 //create post
 postRouter.post(
