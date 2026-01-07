@@ -9,4 +9,4 @@ function commentOwner(req, res, next) {
   next();
 }
 
-module.exports = commentOwner;
+module.exports = { commentOwner };
