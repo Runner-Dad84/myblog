@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const prisma = require('../prismaClient');
 const { requireAuth } = require("../middleware/authMiddleware");
-const { handleValidationErrors } = require("../validators/handleValidationErrors");
+const { handleValidationErrors } = require("../middleware/handleValidationErrors");
 const { validateCommentCreate } = require("../validators/validatorCommentCreate");
 const { loadComment } = require("../middleware/loadComment");
 const { commentOwner } = require("../middleware/commentOwner");
