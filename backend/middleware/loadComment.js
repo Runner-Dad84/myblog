@@ -8,8 +8,13 @@ async function loadComment(req, res, next) {
     return res.status(400).json({ error: "Invalid comment ID" });
   }
 
-  const comment = await prisma.comment.findUnique({
+   const comment = await prisma.comment.findUnique({
     where: { id: commentId },
+    include: {
+      post: {
+        select: { userId: true }
+      }
+    }
   });
 
   if (!comment) {
