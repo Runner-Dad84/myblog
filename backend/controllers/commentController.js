@@ -21,7 +21,6 @@ async function createComment(req, res) {
     }
 }
 
-///working here
 async function deleteComment(req, res){
     try {
 
