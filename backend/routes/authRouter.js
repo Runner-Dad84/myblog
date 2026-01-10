@@ -153,19 +153,19 @@ authRouter.post("/auth/log-out", (req, res, next) => {
 | Used by frontend to check login state
 |--------------------------------------------------------------------------
 */
-authRouter.get("/auth/session", (req, res) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
-    return res.json({ authenticated: false });
-  }
+authRouter.post("/logout", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
 
-  res.json({
-    authenticated: true,
-    user: {
-      id: req.user.id,
-      username: req.user.username,
-    },
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.status(200).json({ message: "Logged out" });
+    });
   });
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -192,5 +192,23 @@ authRouter.post(
     }
   }
 );
+/*
+|--------------------------------------------------------------------------
+| SESSION /auth/session
+|--------------------------------------------------------------------------
+*/
+
+
+authRouter.get("/auth/session", (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ authenticated: false });
+  }
+
+  res.json({
+    authenticated: true,
+    user: req.user,
+  });
+});
+
 
 module.exports = authRouter;
