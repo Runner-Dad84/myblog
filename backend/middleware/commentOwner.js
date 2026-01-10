@@ -1,7 +1,8 @@
 //Requestor must be the commentor or the poster
 function commentOwner(req, res, next) {
-    const commentOwner = req.comment.userId === req.user.id;
-    const postOwner = req.post.userId === req.user.id;
+    const userId = req.user.id;
+    const commentOwner = req.comment.userId === userId;
+    const postOwner = req.comment.post.userId === userId;
     
   if (!postOwner && !commentOwner) {
     return res.status(403).json({ error: "Not authorized" });
