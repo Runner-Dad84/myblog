@@ -43,7 +43,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-//static passwords
+//static files
 app.use(express.static(path.join(__dirname, "public")));
 
 //routers
