@@ -1,4 +1,7 @@
-require("dotenv").config();
+require("dotenv").config({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
+
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
@@ -10,7 +13,6 @@ const commentRouter = require("./routes/commentRouter")
 const authRouter = require("./routes/authRouter")
 
 const app = express();
-const PORT = process.env.PORT || 3011;
 
 
 // load the passport strategy
@@ -49,13 +51,6 @@ app.use("/", userRouter);
 app.use("/", postRouter);
 app.use('/', commentRouter);
 app.use("/", authRouter);
-
-// start server
-if (process.env.NODE_ENV !== 'test'){
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
-}
 
 module.exports = app;
 
