@@ -31,8 +31,8 @@ describe("AUTH ROUTES", () => {
         });
 
       expect(res.status).toBe(201);
-      expect(res.body).toHaveProperty("id");
-      expect(res.body.username).toBe("alice");
+      expect(typeof res.body.user.id).toBe("number");
+      expect(res.body.user.username).toBe("alice");
     });
 
     test("rejects duplicate username", async () => {
