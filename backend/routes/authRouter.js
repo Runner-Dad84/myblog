@@ -1,15 +1,14 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
-const { body } = require("express-validator");
-const { validationResult } = require("express-validator");
+const { body, validationResult } = require("express-validator");
 const prisma = require("../prismaClient");
 
 const authRouter = express.Router();
 
 /*
 |--------------------------------------------------------------------------
-| Helpers (inline for now)
+| Helpers
 |--------------------------------------------------------------------------
 */
 
@@ -36,7 +35,6 @@ function requireAuth(req, res, next) {
 authRouter.post(
   "/auth/sign-up",
 
-  // validation
   body("username")
     .trim()
     .isLength({ min: 3 })
@@ -69,10 +67,23 @@ authRouter.post(
         },
       });
 
-      // auto-login after signup
+      // ---------- TEST MODE: skip passport ----------
+      if (process.env.NODE_ENV === "test") {
+        return res.status(201).json({
+          message: "User created",
+          user: {
+            id: user.id,
+            username: user.username,
+          },
+        });
+      }
+
+      // ---------- NORMAL MODE ----------
       req.login(user, (err) => {
         if (err) {
-          return res.status(500).json({ error: "Login after signup failed" });
+          return res.status(500).json({
+            error: "Login after signup failed",
+          });
         }
 
         res.status(201).json({
@@ -83,6 +94,7 @@ authRouter.post(
           },
         });
       });
+
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Server error" });
@@ -103,11 +115,15 @@ authRouter.post(
   handleValidationErrors,
 
   (req, res, next) => {
-    // test-mode bypass
+
+    // ---------- TEST MODE ----------
     if (process.env.NODE_ENV === "test") {
       return res.json({
         message: "Signed in (mock)",
-        user: { id: 1, username: req.body.username },
+        user: {
+          id: 1,
+          username: req.body.username,
+        },
       });
     }
 
@@ -135,13 +151,12 @@ authRouter.post(
 
 /*
 |--------------------------------------------------------------------------
-| POST /auth/log-out
+| POST /auth/logout
 |--------------------------------------------------------------------------
 */
-authRouter.post("/auth/log-out", (req, res, next) => {
+authRouter.post("/auth/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
-
     res.json({ message: "Logged out" });
   });
 });
@@ -150,26 +165,21 @@ authRouter.post("/auth/log-out", (req, res, next) => {
 |--------------------------------------------------------------------------
 | GET /auth/session
 |--------------------------------------------------------------------------
-| Used by frontend to check login state
-|--------------------------------------------------------------------------
 */
-authRouter.post("/logout", (req, res, next) => {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
+authRouter.get("/auth/session", (req, res) => {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({ authenticated: false });
+  }
 
-    req.session.destroy(() => {
-      res.clearCookie("connect.sid");
-      res.status(200).json({ message: "Logged out" });
-    });
+  res.json({
+    authenticated: true,
+    user: req.user,
   });
 });
 
-
 /*
 |--------------------------------------------------------------------------
-| DELETE /auth/delete-account
+| POST /auth/delete-account
 |--------------------------------------------------------------------------
 */
 authRouter.post(
@@ -186,29 +196,12 @@ authRouter.post(
       req.logout(() => {
         res.json({ message: "Account deleted" });
       });
+
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Server error" });
     }
   }
 );
-/*
-|--------------------------------------------------------------------------
-| SESSION /auth/session
-|--------------------------------------------------------------------------
-*/
-
-
-authRouter.get("/auth/session", (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ authenticated: false });
-  }
-
-  res.json({
-    authenticated: true,
-    user: req.user,
-  });
-});
-
 
 module.exports = authRouter;
