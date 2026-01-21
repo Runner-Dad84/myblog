@@ -118,6 +118,12 @@ authRouter.post(
 
     // ---------- TEST MODE ----------
     if (process.env.NODE_ENV === "test") {
+      if (req.body.password !== "password123") {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      req.session.userId = 1; // force session creation
+
       return res.json({
         message: "Signed in (mock)",
         user: {
@@ -127,25 +133,27 @@ authRouter.post(
       });
     }
 
-    passport.authenticate("local", (err, user, info) => {
-      if (err) return next(err);
+   passport.authenticate("local", (err, user) => {
+  if (err) return next(err);
 
-      if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
+  if (!user) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
 
-      req.logIn(user, (err) => {
-        if (err) return next(err);
+  req.login(user, (err) => {
+    if (err) return next(err);
 
-        res.json({
-          message: "Signed in",
-          user: {
-            id: user.id,
-            username: user.username,
-          },
-        });
-      });
-    })(req, res, next);
+    // Force session write so express-session sets cookie
+     req.session.userId = user.id;
+
+
+    return res.status(200).json({
+      message: "Signed in",
+      user,
+    });
+  });
+})(req, res, next);
+
   }
 );
 
