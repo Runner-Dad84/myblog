@@ -23,6 +23,7 @@ describe("AUTH ROUTES", () => {
 
   describe("POST /auth/sign-up", () => {
     test("creates a new user", async () => {
+      
       const res = await request(app)
         .post("/auth/sign-up")
         .send({
@@ -62,19 +63,22 @@ describe("AUTH ROUTES", () => {
     });
 
     test("logs in valid user and sets session cookie", async () => {
-      const res = await request(app)
+      const agent = request.agent(app);
+      const res = await agent
         .post("/auth/sign-in")
         .send({
           username: "bob",
           password: "password123",
         });
+         //console.log("SESSION AFTER LOGIN:", req.session);
 
       expect(res.status).toBe(200);
       expect(res.headers["set-cookie"]).toBeDefined();
     });
 
     test("rejects invalid password", async () => {
-      const res = await request(app)
+      const agent = request.agent(app);
+      const res = await agent
         .post("/auth/sign-in")
         .send({
           username: "bob",
