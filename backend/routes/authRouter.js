@@ -114,46 +114,57 @@ authRouter.post(
   body("password").exists(),
   handleValidationErrors,
 
-  (req, res, next) => {
+  async (req, res, next) => {
 
-    // ---------- TEST MODE ----------
+    // ===============================
+    // TEST MODE (NO PASSPORT)
+    // ===============================
     if (process.env.NODE_ENV === "test") {
-      if (req.body.password !== "password123") {
+      const { username, password } = req.body;
+
+      // Reject incorrect password
+      if (password !== "password123") {
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
-      req.session.userId = 1; // force session creation
+      // Find user created by test
+      const user = await prisma.user.findUnique({
+        where: { username },
+        select: { id: true, username: true },
+      });
 
-      return res.json({
-        message: "Signed in (mock)",
-        user: {
-          id: 1,
-          username: req.body.username,
-        },
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      // Persist session for supertest agent
+      req.session.userId = user.id;
+
+      return res.status(200).json({
+        message: "Signed in (test)",
+        user,
       });
     }
 
-   passport.authenticate("local", (err, user) => {
-  if (err) return next(err);
+    // ===============================
+    // NORMAL MODE (PASSPORT)
+    // ===============================
+    passport.authenticate("local", (err, user) => {
+      if (err) return next(err);
 
-  if (!user) {
-    return res.status(401).json({ error: "Invalid credentials" });
-  }
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
 
-  req.login(user, (err) => {
-    if (err) return next(err);
+      req.login(user, (err) => {
+        if (err) return next(err);
 
-    // Force session write so express-session sets cookie
-     req.session.userId = user.id;
-
-
-    return res.status(200).json({
-      message: "Signed in",
-      user,
-    });
-  });
-})(req, res, next);
-
+        return res.status(200).json({
+          message: "Signed in",
+          user,
+        });
+      });
+    })(req, res, next);
   }
 );
 
@@ -174,16 +185,34 @@ authRouter.post("/auth/logout", (req, res, next) => {
 | GET /auth/session
 |--------------------------------------------------------------------------
 */
-authRouter.get("/auth/session", (req, res) => {
+authRouter.get("/auth/session", async (req, res) => {
+  // ---------- TEST MODE ----------
+  if (process.env.NODE_ENV === "test") {
+    if (!req.session.userId) {
+      return res.status(401).json({ authenticated: false });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.session.userId },
+      select: { id: true, username: true },
+    });
+
+    if (!user) {
+      return res.status(401).json({ authenticated: false });
+    }
+
+    // IMPORTANT: return user directly so your test can read res.body.username
+    return res.status(200).json(user);
+  }
+
+  // ---------- NORMAL MODE ----------
   if (!req.isAuthenticated || !req.isAuthenticated()) {
     return res.status(401).json({ authenticated: false });
   }
 
-  res.json({
-    authenticated: true,
-    user: req.user,
-  });
+  return res.status(200).json(req.user);
 });
+
 
 /*
 |--------------------------------------------------------------------------

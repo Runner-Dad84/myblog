@@ -126,7 +126,7 @@ describe("AUTH ROUTES", () => {
         .post("/auth/sign-in")
         .send({ username: "dan", password: "password123" });
 
-      const res = await agent.post("/logout");
+      const res = await agent.post("/auth/logout");
 
       expect(res.status).toBe(200);
 
