@@ -41,6 +41,7 @@ describe("POST /post/create", () => {
       id: 1,
       title: "Test Post",
       userId: 123,
+      content: 'This is test content',
       isPublic: true,
     };
 
@@ -50,6 +51,7 @@ describe("POST /post/create", () => {
       .post("/post/create")
       .send({
         title: "Test Post",
+        content: 'This is test cotent',
         isPublic: true,
       });
 
@@ -62,6 +64,7 @@ describe("POST /post/create", () => {
       data: {
         title: "Test Post",
         userId: 123,
+        content: 'This is test cotent',
         isPublic: true,
       },
     });
