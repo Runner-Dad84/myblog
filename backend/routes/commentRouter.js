@@ -12,7 +12,7 @@ const { createComment, deleteComment } = require("../controllers/commentControll
 
 //create comment
 commentRouter.post(
-  "/comment/create/postId",
+  "/comment/create/:postId",
   requireAuth,               // authentication middleware (reusable)
   validateCommentCreate,
   handleValidationErrors,    // converts validation failures → 400
