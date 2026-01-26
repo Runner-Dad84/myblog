@@ -47,10 +47,10 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, "public")));
 
 //routers
-app.use("/", userRouter);
-app.use("/", postRouter);
-app.use('/', commentRouter);
-app.use("/", authRouter);
+app.use("/api", userRouter);
+app.use("/api", postRouter);
+app.use('/api', commentRouter);
+app.use("/api", authRouter);
 
 module.exports = app;
 
