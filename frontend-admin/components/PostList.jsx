@@ -8,6 +8,7 @@ const PostList = ({ posts = [] }) => {
             Title: {post.title}
             Author: {post.user.username}
             Posted: {post.generatedAt}
+            Coments: {post.comments.length}
             Public: {post.isPublic ? 'Yes' : 'No'}
             Visible: {post.isPublished ? 'Yes' : 'No'}
         </li>
