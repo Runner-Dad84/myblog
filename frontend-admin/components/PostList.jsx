@@ -11,6 +11,8 @@ const PostList = ({ posts = [] }) => {
             Coments: {post.comments.length}
             Public: {post.isPublic ? 'Yes' : 'No'}
             Visible: {post.isPublished ? 'Yes' : 'No'}
+
+            <button onClick={() => onDelete(post.id)}>Delete</button>
         </li>
     )
     return (
