@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PostList from '../../components/PostList'
 
-const HomePageContainer = () => {
+const AdminPostPage = () => {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -14,13 +14,7 @@ const HomePageContainer = () => {
         if (!response.ok){
             throw new Error('failed to fetch posts')
         }
-
-        <button
-      onClick={() => onDelete(post.id)}
-      >Delete Post</button>
     
-
-
         const data = await response.json();
         setPosts(data);
         
@@ -37,14 +31,19 @@ const HomePageContainer = () => {
 
 const handleDelete = async (postId) => {
     try {
-        await fetch(`/api/post/${postId}`, {
+        await fetch(`/api/post/delete/${postId}`, {
             method: 'DELETE',
         });
-setPosts(prev => prev.filter(p => p.id !== postId));
-} catch (err) {
-    console.error('Delete failed', err);
+        setPosts(prev => prev.filter(p => p.id !== postId));
+      } catch (err) {
+        console.error('Delete failed', err);
 }
 };
+
+const handleEdit = (postId) => {
+console.log('Edit post', postId);
+};
+
   
   if (isLoading) {return <div>Loading...</div>;}
   if (error) return <div>Error: {error}</div>;
@@ -53,7 +52,7 @@ setPosts(prev => prev.filter(p => p.id !== postId));
   return (
     <div className="adminPostPage-container">
       <h1>Admin Page</h1>
-      <PostList posts={posts} onDelete={handleDelete}/>
+      <PostList posts={posts} onDelete={handleDelete} onEdit={handleEdit}/>
 
     </div>
 
