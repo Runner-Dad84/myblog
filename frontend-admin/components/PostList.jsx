@@ -1,7 +1,12 @@
 import React from 'react';
 import './PostList.css'; //
 
-const PostList = ({ posts = [] }) => {
+const PostList = ({ 
+    posts = [],
+    onDelete,
+    onEdit,
+    isAdmin = false
+}) => {
 
     const list = posts.map((post) => 
         <li key = {post.id}>
@@ -13,6 +18,14 @@ const PostList = ({ posts = [] }) => {
             Visible: {post.isPublished ? 'Yes' : 'No'}
 
             <button onClick={() => onDelete(post.id)}>Delete</button>
+            <button onClick={() => onEdit(post.id)}>Edit</button>
+
+            {isAdmin && (
+                <div className="post-actions">
+                    <button onClick={() => onEdit(post.id)}>Edit</button>
+                    <button onClick={() => onDelete(post.id)}>Delete</button>
+                </div>
+            )}
         </li>
     )
     return (
