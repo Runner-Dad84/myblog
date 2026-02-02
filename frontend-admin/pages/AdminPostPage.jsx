@@ -5,6 +5,7 @@ const AdminPostPage = () => {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [editingPost, setEditingPost] = useState(null);
 
     useEffect(() => {
     // Data fetching or other business logic
@@ -41,24 +42,32 @@ const handleDelete = async (postId) => {
 };
 
 const handleEdit = (postId) => {
-console.log('Edit post', postId);
-};
+  const handleEdit = (postId) => {
+  const postToEdit = posts.find(p => p.id === postId);
+  setEditingPost(postToEdit);
+};}
 
-  
   if (isLoading) {return <div>Loading...</div>;}
   if (error) return <div>Error: {error}</div>;
 
-// This container orchestrates layout and passes data
+  if (editingPost) {
+  return (
+    <PostForm
+    initialPost={editingPost}
+    mode="edit"
+    onCancel={() => setEditingPost(null)}
+    onSubmit={handleUpdate}
+    />
+  );
+} else {
   return (
     <div className="adminPostPage-container">
       <h1>Admin Page</h1>
       <PostList posts={posts} onDelete={handleDelete} onEdit={handleEdit}/>
-
     </div>
-
-
-      
   );
 }
+}
+
 export default AdminPostPage;
 
