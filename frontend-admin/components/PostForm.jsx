@@ -20,6 +20,15 @@ const PostForm = () => {
     }));
   };
 
+  useEffect(() => {
+  if (initialPost) {
+    setTitle(initialPost.title ?? '');
+    setContent(initialPost.content ?? '');
+    setIsPublic(!!initialPost.isPublic);
+    setIsPublished(!!initialPost.isPublished);
+  }
+}, [initialPost]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
         
@@ -81,30 +90,22 @@ const PostForm = () => {
         />
       </div>
        <div>
-        <label htmlFor="isPublic">Visibility:</label>
-        <select
-          id="isPublic"
-          name="isPublic"
-          value={String(formData.isPublic)}
-          onChange={handleChange}
-          required
-        >
-        <option value="true">Public</option>
-        <option value="false">Private</option>
-        </select>
+        <label htmlFor="isPublic">Visibility:
+          <input
+          type="checkbox"
+          checked={isPublic}
+          onChange={(e) => setIsPublic(e.target.checked)}
+          />
+        </label>
       </div>
        <div>
-        <label htmlFor="isPublished">Published:</label>
-        <select
-          id="isPublished"
-          name="isPublished"
-          value={String(formData.isPublished)}
-          onChange={handleChange}
-          required
-        >
-        <option value="true">Published</option>
-        <option value="false">Not Published</option>
-        </select>
+        <label htmlFor="isPublished">Published:
+          <input
+          type="checkbox"
+          checked={isPublished}
+          onChange={(e) => setIsPublished(e.target.checked)}
+          />
+        </label>
       </div>
       <button type="submit">Submit</button>
     </form>
