@@ -47,6 +47,34 @@ const handleEdit = (postId) => {
   setEditingPost(postToEdit);
 };}
 
+const handleUpdate = async (updatedPost) => {
+  try {
+    const res = await fetch(`/api/post/${updatedPost.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedPost),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to update post');
+    }
+
+    const savedPost = await res.json();
+
+    // Update local state (no refetch needed)
+    setPosts(prev =>
+      prev.map(p => (p.id === savedPost.id ? savedPost : p))
+    );
+
+    // Exit edit mode
+    setEditingPost(null);
+  } catch (err) {
+    console.error('Update failed', err);
+  }
+};
+
   if (isLoading) {return <div>Loading...</div>;}
   if (error) return <div>Error: {error}</div>;
 
