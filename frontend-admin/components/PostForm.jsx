@@ -50,8 +50,7 @@ const handleSubmit = async (e) => {
     });
 
     if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.message || "Failed to save post");
+      throw new Error("Failed to save post");
     }
 
     const savedPost = await res.json();
@@ -100,8 +99,13 @@ const handleSubmit = async (e) => {
         <label htmlFor="isPublic">Visibility:
           <input
           type="checkbox"
-          checked={isPublic}
-          onChange={(e) => setIsPublic(e.target.checked)}
+          checked={formData.isPublic}
+          onChange={(e) =>
+            setFormData(prev => ({
+              ...prev,
+              isPublic: e.target.checked
+            }))
+          }
           />
         </label>
       </div>
@@ -109,8 +113,13 @@ const handleSubmit = async (e) => {
         <label htmlFor="isPublished">Published:
           <input
           type="checkbox"
-          checked={isPublished}
-          onChange={(e) => setIsPublished(e.target.checked)}
+          checked={formData.isPublished}
+          onChange={(e) =>
+            setFormData(prev => ({
+              ...prev,
+              isPublished: e.target.checked
+            }))
+          }
           />
         </label>
       </div>
