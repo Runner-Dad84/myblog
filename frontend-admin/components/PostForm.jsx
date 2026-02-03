@@ -29,42 +29,47 @@ const PostForm = () => {
   }
 }, [initialPost]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-        
-        try {
-            const res = await fetch("/api/post/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
-            
-            if (!res.ok) {
-                const error = await res.json();
-                throw new Error(error.message || "Failed to create post");
-            }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-            const createdPost = await res.json();
-            console.log("Post created:", createdPost);
-            
-            // Optional: reset form
-            setFormData({
-                title: "",
-                content: "",
-                isPublic: true,
-                isPublished: false,
-            });
-        
-        } catch (err) {
-            console.error(err);
-            alert(err.message);
-        }
-    
-    console.log('Form submitted:', formData);
-    alert(`Form submitted with title: ${formData.title}`);
-  };
+  const url = isEditMode
+    ? `/api/post/${initialPost.id}`
+    : "/api/post/create";
+
+  const method = isEditMode ? "PATCH" : "POST";
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || "Failed to save post");
+    }
+
+    const savedPost = await res.json();
+
+    // 🔑 THIS is how the container gets control back
+    onSubmit(savedPost);
+
+    if (!isEditMode) {
+      setFormData({
+        title: "",
+        content: "",
+        isPublic: true,
+        isPublished: false,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit}>
