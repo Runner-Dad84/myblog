@@ -20,13 +20,15 @@ const PostForm = () => {
     }));
   };
 
-  useEffect(() => {
+useEffect(() => {
   if (initialPost) {
-    setTitle(initialPost.title ?? '');
-    setContent(initialPost.content ?? '');
-    setIsPublic(!!initialPost.isPublic);
-    setIsPublished(!!initialPost.isPublished);
-  }
+    setFormData({
+      title: initialPost.title ?? "",
+      content: initialPost.content ?? "",
+      isPublic: !!initialPost.isPublic,
+      isPublished: !!initialPost.isPublished,
+});
+}
 }, [initialPost]);
 
 const handleSubmit = async (e) => {
