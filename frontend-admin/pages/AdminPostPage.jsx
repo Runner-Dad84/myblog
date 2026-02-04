@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PostList from '../../components/PostList'
+import PostForm from '../../components/PostForm';
 
 const AdminPostPage = () => {
     const [posts, setPosts] = useState([]);
@@ -42,10 +43,9 @@ const handleDelete = async (postId) => {
 };
 
 const handleEdit = (postId) => {
-  const handleEdit = (postId) => {
   const postToEdit = posts.find(p => p.id === postId);
   setEditingPost(postToEdit);
-};}
+};
 
 const handleUpdate = async (updatedPost) => {
   try {
