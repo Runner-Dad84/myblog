@@ -49,7 +49,7 @@ const handleEdit = (postId) => {
 
 const handleUpdate = async (updatedPost) => {
   try {
-    const res = await fetch(`/api/post/${updatedPost.id}`, {
+    const res = await fetch(`/api/post/edit/${updatedPost.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
