@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import PostList from '../../components/PostList'
-import PostForm from '../../components/PostForm';
+import PostList from '/src/components/PostList';
+import PostForm from '/src/components/PostForm';
 
 const AdminPostPage = () => {
     const [posts, setPosts] = useState([]);
