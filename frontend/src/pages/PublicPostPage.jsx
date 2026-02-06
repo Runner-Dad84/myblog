@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import PostList from '../../components/PostList';
+import PostList from '/src/components/PostList';
 
 const PublicPostPage = () => {
   const [posts, setPosts] = useState([]);
