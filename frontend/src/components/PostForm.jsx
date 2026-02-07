@@ -133,6 +133,7 @@ const handleSubmit = async (e) => {
         </label>
       </div>
       <button type="submit">Submit</button>
+      <button type="button" onClick={onCancel}>Cancel</button>
     </form>
   );
 };
