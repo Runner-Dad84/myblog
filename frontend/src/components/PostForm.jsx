@@ -1,6 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const PostForm = () => {
+
+const PostForm = (
+  {
+  initialPost = null,
+  mode = 'create',
+  onSubmit,
+  onCancel,
+  }
+) => {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
