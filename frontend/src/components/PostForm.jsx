@@ -9,6 +9,7 @@ const PostForm = (
   onCancel,
   }
 ) => {
+  const isEditMode = mode === 'edit';
   const [formData, setFormData] = useState({
     title: '',
     content: '',
