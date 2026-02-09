@@ -1,12 +1,12 @@
-import express from 'express';
-import prisma from '../prisma/client.js';
+const express = require("express");
+const prisma = require("../prisma/client");
 
 const router = express.Router();
 
 /**
  * Admin only access - all posts
  */
-router.get('/public', async (req, res) => {
+router.get('/admin/posts', async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
       include: {
