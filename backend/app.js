@@ -12,7 +12,7 @@ const postRouter = require("./routes/postRouter")
 const commentRouter = require("./routes/commentRouter")
 const authRouter = require("./routes/authRouter")
 const adminPostRoute = require("./routes/adminPostRoute")
-const publicPostRoute = requore("./routes/publicPostRoute")
+const publicPostRoute = require("./routes/publicPostRoute")
 
 const app = express();
 
