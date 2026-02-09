@@ -1,12 +1,12 @@
 const express = require("express");
 const prisma = require("../prisma/client");
 
-const router = express.Router();
+const adminPostRoute = express.Router();
 
 /**
  * Admin only access - all posts
  */
-router.get('/admin/posts', async (req, res) => {
+adminPostRoute.get('/admin/posts', async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
       include: {
@@ -28,3 +28,5 @@ router.get('/admin/posts', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch public posts' });
   }
 });
+
+module.exports = adminPostRoute;
