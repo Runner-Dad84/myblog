@@ -1,13 +1,13 @@
 const express = require("express");
 const prisma = require("../prisma/client");
 
-const router = express.Router();
+const publicPostRoute = express.Router();
 
 /**
  * PUBLIC POSTS
  * Anyone can access
  */
-router.get('/public', async (req, res) => {
+publicPostRoute.get('/public', async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
       where: {
@@ -33,3 +33,5 @@ router.get('/public', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch public posts' });
   }
 });
+
+module.exports = publicPostRoute;
