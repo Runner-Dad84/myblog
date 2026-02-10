@@ -43,6 +43,7 @@ export default function SignIn({ onSuccess }) {
                 required
             />
             <button type="submit">Sign In</button>
+            <Link to="/signup" id="customBtn">Sign Up</Link>
             {error && <p>{error}</p>}
         </form>
     );
