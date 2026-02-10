@@ -1,5 +1,5 @@
 import React from 'react';
-import './PostList.css'; //
+//import './PostList.css'; //
 
 const PostList = ({ 
     posts = [],
@@ -8,12 +8,15 @@ const PostList = ({
     isAdmin = false
 }) => {
 
+    
     const list = posts.map((post) => 
         <li key = {post.id}>
+            
             Title: {post.title}
             Author: {post.user.username}
             Posted: {post.generatedAt}
-            Coments: {post.comments.length}
+            // comments may be undefined until wired up
+            Comments: {post.comments?.length ?? 0}
             Public: {post.isPublic ? 'Yes' : 'No'}
             Visible: {post.isPublished ? 'Yes' : 'No'}
 
