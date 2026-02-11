@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthContainer from "./AuthContainer";
-import AdminContainer from "./AdminContainer";
+import AuthPage from "./pages/AuthPage";
+import AdminPostPage from "./pages/AdminPostPage";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -12,9 +12,9 @@ export default function App() {
   return (
     <div>
       {user ? (
-        <AdminContainer user={user} onLogout={handleLogout} />
+        <AdminPostPage user={user} onLogout={handleLogout} />
       ) : (
-        <AuthContainer onAuthSuccess={setUser} />
+        <AuthPage onAuthSuccess={setUser} />
       )}
     </div>
   );
