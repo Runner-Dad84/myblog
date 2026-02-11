@@ -1,9 +1,21 @@
-import './App.css'
+import { useState } from "react";
+import AuthContainer from "./AuthContainer";
+import AdminContainer from "./AdminContainer";
 
-import AdminPostPage from "./pages/AdminPostPage";
+export default function App() {
+  const [user, setUser] = useState(null);
 
-function App() {
-  return <AdminPostPage />;
+  function handleLogout() {
+    setUser(null);
+  }
+
+  return (
+    <div>
+      {user ? (
+        <AdminContainer user={user} onLogout={handleLogout} />
+      ) : (
+        <AuthContainer onAuthSuccess={setUser} />
+      )}
+    </div>
+  );
 }
-
-export default App
