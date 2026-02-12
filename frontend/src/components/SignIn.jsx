@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function SignIn({ onSuccess }) {
+export default function SignIn({ onSuccess, switchMode }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -43,7 +43,11 @@ export default function SignIn({ onSuccess }) {
                 required
             />
             <button type="submit">Sign In</button>
-            <Link to="/signup" id="customBtn">Sign Up</Link>
+            <button
+              type="button"
+              id="customBtn"
+               onClick={switchMode}
+            > Sign Up</button>
             {error && <p>{error}</p>}
         </form>
     );
