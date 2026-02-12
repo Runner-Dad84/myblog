@@ -8,9 +8,13 @@ export default function AuthPage({ onAuthSuccess }) {
   return (
     <div>
       {mode === "login" ? (
-        <SignIn onSuccess={onAuthSuccess} switchMode={() => setMode("signup")} />
+        <SignIn onSuccess={onAuthSuccess} 
+        switchMode={() => setMode("signup")} 
+        />
       ) : (
-        <SignUp onSuccess={onAuthSuccess} switchMode={() => setMode("login")} />
+        <SignUp onSuccess={onAuthSuccess} 
+        switchMode={() => setMode("login")} 
+        />
       )}
     </div>
   );
