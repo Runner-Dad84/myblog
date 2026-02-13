@@ -12,7 +12,7 @@ const AdminPostPage = () => {
     // Data fetching or other business logic
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/post');
+        const response = await fetch('/api/admin/posts');
         if (!response.ok){
             throw new Error('failed to fetch posts')
         }
@@ -33,9 +33,15 @@ const AdminPostPage = () => {
 
 const handleDelete = async (postId) => {
     try {
-        await fetch(`/api/post/delete/${postId}`, {
+        const res =await fetch(`/api/post/delete/${postId}`, {
             method: 'DELETE',
+            credentials: 'include'
         });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Delete failed');
+        }
         setPosts(prev => prev.filter(p => p.id !== postId));
       } catch (err) {
         console.error('Delete failed', err);
