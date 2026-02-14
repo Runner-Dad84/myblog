@@ -108,7 +108,7 @@ authRouter.post(
 |--------------------------------------------------------------------------
 */
 authRouter.post(
-  "/auth/sign-in",
+  "/auth/login",
 
   body("username").exists(),
   body("password").exists(),
