@@ -93,15 +93,24 @@ const handleUpdate = async (updatedPost) => {
     onSubmit={handleUpdate}
     />
   );
-} else {
+};
   return (
     <div className="adminPostPage-container">
       <h1>Admin Page</h1>
-      <PostList posts={posts} onDelete={handleDelete} onEdit={handleEdit}/>
+      
+      {posts.length === 0 ? (
+      <span>No posts yet</span>
+    ) : (
+    <PostList 
+      posts={posts} 
+      onDelete={handleDelete} 
+      onEdit={handleEdit}
+      />
+      )}
     </div>
   );
 }
-}
+
 
 export default AdminPostPage;
 
