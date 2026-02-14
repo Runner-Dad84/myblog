@@ -34,7 +34,13 @@ const PublicPostPage = () => {
   return (
     <div className="publicPostPage-container">
       <h1>Posts</h1>
-      <PostList posts={posts} />
+
+      {(posts.length === 0) ? (
+        <span>No posts available</span>
+      ) : (
+      <PostList posts={posts} 
+      />
+      )}
     </div>
   );
 };
