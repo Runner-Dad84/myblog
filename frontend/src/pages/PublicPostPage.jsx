@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PostList from '/src/components/PostList';
+import SignOut from '/src/components/SignOut';
 
 const PublicPostPage = () => {
   const [posts, setPosts] = useState([]);
@@ -34,6 +35,7 @@ const PublicPostPage = () => {
   return (
     <div className="publicPostPage-container">
       <h1>Posts</h1>
+      <SignOut onLogout={onLogout} />
 
       {(posts.length === 0) ? (
         <span>No posts available</span>
