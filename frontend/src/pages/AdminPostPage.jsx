@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PostList from '/src/components/PostList';
 import PostForm from '/src/components/PostForm';
+import SignOut from '/src/components/SignOut';
 
-const AdminPostPage = () => {
+const AdminPostPage = ( {onLogout }) => {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -53,7 +54,7 @@ const handleEdit = (postId) => {
   setEditingPost(postToEdit);
 };
 
-const handleUpdate = async (updatedPost) => {
+const handleUpdate = async ( updatedPost ) => {
   try {
     const res = await fetch(`/api/post/edit/${updatedPost.id}`, {
       method: 'PATCH',
@@ -97,6 +98,7 @@ const handleUpdate = async (updatedPost) => {
   return (
     <div className="adminPostPage-container">
       <h1>Admin Page</h1>
+      <SignOut onLogout={onLogout} />
       
       {posts.length === 0 ? (
       <span>No posts yet</span>
