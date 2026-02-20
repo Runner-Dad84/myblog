@@ -7,7 +7,8 @@ const AdminPostPage = ( {onLogout }) => {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
-    const [editingPost, setEditingPost] = useState(null);
+    const [activePost, setActivePost] = useState(null);
+  
 
     useEffect(() => {
     // Data fetching or other business logic
@@ -49,10 +50,40 @@ const handleDelete = async (postId) => {
 }
 };
 
-const handleEdit = (postId) => {
-  const postToEdit = posts.find(p => p.id === postId);
-  setEditingPost(postToEdit);
+function handleEdit(post) {
+  setActivePost(post);
+}
+
+function handleCreate() {
+  setActivePost({}); // empty object signals "create"
+}
+
+const handleCreateSubmit = async (newPost) => {
+  try {
+    const res = await fetch('/api/post/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(newPost),
+    });
+
+    const data = await res.json();  // ← define data FIRST
+
+    if (!res.ok) {
+      console.log("Backend error:", data);
+      throw new Error(data.error || 'Failed to create post');
+    }
+
+    setPosts(prev => [...prev, data.post]);
+    setActivePost(null);
+
+  } catch (err) {
+    console.error('Create failed', err);
+  }
 };
+
 
 const handleUpdate = async ( updatedPost ) => {
   try {
@@ -61,6 +92,7 @@ const handleUpdate = async ( updatedPost ) => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(updatedPost),
     });
 
@@ -76,7 +108,7 @@ const handleUpdate = async ( updatedPost ) => {
     );
 
     // Exit edit mode
-    setEditingPost(null);
+    setActivePost(null);
   } catch (err) {
     console.error('Update failed', err);
   }
@@ -85,19 +117,22 @@ const handleUpdate = async ( updatedPost ) => {
   if (isLoading) {return <div>Loading...</div>;}
   if (error) return <div>Error: {error}</div>;
 
-  if (editingPost) {
+ if (activePost) {
+  const isEdit = activePost?.id != null;
+
   return (
     <PostForm
-    initialPost={editingPost}
-    mode="edit"
-    onCancel={() => setEditingPost(null)}
-    onSubmit={handleUpdate}
+      initialPost={isEdit ? activePost : null}
+      mode={isEdit ? "edit" : "create"}
+      onCancel={() => setActivePost(null)}
+      onSubmit={isEdit ? handleUpdate : handleCreateSubmit}
     />
   );
-};
+}
   return (
     <div className="adminPostPage-container">
       <h1>Admin Page</h1>
+      <button onClick={handleCreate}>New Post</button>
       <SignOut onLogout={onLogout} />
       
       {posts.length === 0 ? (
@@ -112,7 +147,6 @@ const handleUpdate = async ( updatedPost ) => {
     </div>
   );
 }
-
 
 export default AdminPostPage;
 
