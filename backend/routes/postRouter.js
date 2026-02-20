@@ -21,7 +21,7 @@ postRouter.post(
   createPost
 );
 
-postRouter.post(
+postRouter.delete(
   "/post/delete/:id",
   requireAuth,              // authentication middleware (reusable)
   loadPost,                 // middleware - checks post id valid, check post exists

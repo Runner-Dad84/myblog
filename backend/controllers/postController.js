@@ -15,6 +15,10 @@ async function createPost(req, res) {
         ...(typeof isPublic === "boolean" && { isPublic }),
         ...(typeof isPublished === "boolean" && { isPublished }),
       },
+       include: {
+       user: true,
+       comments: true, // optional but consistent
+  },
     });
      res.status(201).json({ message: "Post created", post: newPost });
         } catch (err) {

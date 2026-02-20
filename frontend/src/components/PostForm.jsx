@@ -40,45 +40,9 @@ useEffect(() => {
 }
 }, [initialPost]);
 
-const handleSubmit = async (e) => {
+const handleSubmit = (e) => {
   e.preventDefault();
-
-  const url = isEditMode
-    ? `/api/post/${initialPost.id}`
-    : "/api/post/create";
-
-  const method = isEditMode ? "PATCH" : "POST";
-
-  try {
-    const res = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to save post");
-    }
-
-    const savedPost = await res.json();
-
-    // 🔑 THIS is how the container gets control back
-    onSubmit(savedPost);
-
-    if (!isEditMode) {
-      setFormData({
-        title: "",
-        content: "",
-        isPublic: true,
-        isPublished: false,
-      });
-    }
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
+  onSubmit(formData);
 };
 
   return (
