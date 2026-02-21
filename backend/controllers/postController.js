@@ -29,21 +29,27 @@ async function createPost(req, res) {
 
 async function deletePost(req, res){
    const postId = parseInt(req.params.id, 10);
-   const userId = req.user.id;
+   
     
-    try {
+      try {
 
-        await prisma.comment.deleteMany({
-             where: { postId },
-        });
+    await prisma.comment.deleteMany({
+      where: { postId },
+    });
 
-        await prisma.post.delete({
-            where: { id: postId },
-         });
-         res.redirect("/"); 
+    await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    res.json({
+      message: "Post deleted",
+      id: postId
+    });
         } catch (err) {
             console.log(err)
-            res.status(500).send("Server error");
+            res.status(500).json({
+      error: "Server error"
+    });
         };
 }
 //work on this next!
